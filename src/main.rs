@@ -9,16 +9,16 @@ fn main() {
     game();
 }
 
+/*
+    Start the game.
+    Has the potential to change the board size
+*/
 fn game() {
     let board = initialize();
-    // board[1][2] = 2;
-    // print_board(board);
-    // board[2][3] = 5;
-    // print_board(board);
     start_game(board);
 }
 
-// Initial things -- Num of rows and columns
+// Initial board -- Num of rows and columns
 fn initialize() -> [[char; ROW_SIZE]; COL_SIZE] {
     let mut board: [[char; ROW_SIZE]; COL_SIZE] = [['.'; ROW_SIZE]; COL_SIZE];
     board[3][3] = 'B';
@@ -29,6 +29,9 @@ fn initialize() -> [[char; ROW_SIZE]; COL_SIZE] {
     return board;
 }
 
+/*
+    The core of our game
+*/
 fn start_game(mut board: [[char; ROW_SIZE]; COL_SIZE]) {
     let mut player = 'B';
     let map: HashMap<char, usize> = ('a'..='h').zip(0..8).collect();
@@ -65,6 +68,9 @@ fn start_game(mut board: [[char; ROW_SIZE]; COL_SIZE]) {
     // println!("Game has ended and {} has won!!!", 12);
 }
 
+/*
+    The logic core of the game. Pretty easy I might say
+*/
 fn do_move(board: &mut [[char; ROW_SIZE]; COL_SIZE], row: usize, col: usize, player:char) {
     for i in [-1_i32, 0, 1] {
         for j in [-1_i32, 0, 1] {
@@ -99,10 +105,19 @@ fn do_move(board: &mut [[char; ROW_SIZE]; COL_SIZE], row: usize, col: usize, pla
     }
     // print_board(*board);
 }
+
+/*
+    Checks if the game has ended and if it is,
+    Shows the final stats of the game
+*/
 fn check_for_end() -> bool {
     return true;
 }
 
+
+/*
+    Simple function to print your board
+*/
 fn print_board(board: [[char; ROW_SIZE]; COL_SIZE]) {
     let word_array: [char; ROW_SIZE] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
     println!(
