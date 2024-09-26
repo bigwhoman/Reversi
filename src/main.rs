@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::convert::TryInto;
 use std::io;
 use std::io::Write;
 
@@ -34,7 +35,7 @@ fn initialize() -> [[char; ROW_SIZE]; COL_SIZE] {
 */
 fn start_game(mut board: [[char; ROW_SIZE]; COL_SIZE]) {
     let mut player = 'B';
-    let map: HashMap<char, usize> = ('a'..='h').zip(0..8).collect();
+    let map: HashMap<char, usize> = ('a'..='h').zip(0..9).collect();
     loop {
         loop {
             let mut input_line: String = Default::default();
@@ -42,7 +43,7 @@ fn start_game(mut board: [[char; ROW_SIZE]; COL_SIZE]) {
 
             io::stdout().flush().unwrap();
             io::stdin().read_line(&mut input_line).expect("Wrong input");
-            print_board(board);
+
             let row_move: char = input_line.trim().chars().nth(0).unwrap();
             let col_move: char = input_line.trim().chars().nth(1).unwrap();
 
@@ -63,7 +64,7 @@ fn start_game(mut board: [[char; ROW_SIZE]; COL_SIZE]) {
 
             println!("Invalid Move. Try again.")
         }
-
+        print_board(board);
         if player == 'B' {
             player = 'W';
         } else {
@@ -88,27 +89,33 @@ fn do_move(board: &mut [[char; ROW_SIZE]; COL_SIZE], row: usize, col: usize, pla
             if i == 0 && j == 0 {
                 continue;
             } else {
-                while ['W', 'B']
-                    .iter()
-                    .filter(|&&x| x != player)
-                    .any(|&x| x == board[(temp_row + i).abs() as usize][(temp_col + j).abs() as usize])
+                while (0_i32..ROW_SIZE as i32).contains(&temp_row)
+                    && (0_i32..COL_SIZE as i32).contains(&temp_col)
+                    && ['W', 'B']
+                        .iter()
+                        .any(|&x| x == board[(temp_row).abs() as usize][(temp_col).abs() as usize])
                 {
                     // println!("col {} row : {}",temp_col, temp_row);
 
-                    temp_row += i; 
+                    temp_row += i;
+                    temp_col += j;
+
                     // println!("tmp row {} col : {}", temp_row, temp_col);
                     // println!("i {} and j {}", i, j);
-                    if board[temp_row.abs() as usize][temp_col.abs() as usize] == player {
-                        valid_move = true;
+                    if (0_i32..ROW_SIZE as i32).contains(&temp_row)
+                        && (0_i32..COL_SIZE as i32).contains(&temp_col)
+                        && board[temp_row.abs() as usize][temp_col.abs() as usize] == player
+                    {
                         // println!("nooooooogi");
                         // println!("lampppppppppppp row {} col : {}", temp_row, temp_col);
                         // println!("jampppppp row {} col : {}", row as i32, col as i32);
                         while temp_row != row as i32 || temp_col != col as i32 {
                             temp_col -= j;
                             temp_row -= i;
-
-                            println!("shooo gi ---> row {} col{}", temp_row, temp_col);
-                            board[temp_row.abs() as usize][temp_col.abs() as usize] = player;
+                            if board[temp_row.abs() as usize][temp_col.abs() as usize] != player {
+                                valid_move = true;
+                                board[temp_row.abs() as usize][temp_col.abs() as usize] = player;
+                            }
                         }
                         break;
                     }
@@ -132,7 +139,7 @@ fn check_for_end() -> bool {
     Simple function to print your board
 */
 fn print_board(board: [[char; ROW_SIZE]; COL_SIZE]) {
-    let word_array: [char; ROW_SIZE] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    let word_array: [char; ROW_SIZE] = ('a'..='h').collect::<Vec<_>>().try_into().unwrap();
     println!(
         "  {:?}",
         word_array
